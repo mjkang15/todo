@@ -6,6 +6,108 @@ if (typeof db === 'undefined') {
   throw new Error('Supabase client(db) not initialized');
 }
 
+/* ─── 인증 ──────────────────────────────────────────── */
+let currentUser = null;
+let authMode    = 'login';
+
+function showAuthScreen() {
+  document.getElementById('auth-overlay').style.display = 'flex';
+  document.getElementById('app-bar-user').style.display = 'none';
+  document.getElementById('desktop-user-bar').classList.remove('visible');
+  currentUser = null;
+}
+
+function hideAuthScreen(user) {
+  currentUser = user;
+  document.getElementById('auth-overlay').style.display = 'none';
+  document.getElementById('app-bar-user').style.display = 'flex';
+  document.getElementById('app-bar-email').textContent  = user.email;
+  document.getElementById('desktop-user-bar').classList.add('visible');
+  document.getElementById('desktop-user-email').textContent = user.email;
+  renderTodos();
+}
+
+function setAuthMessage(msg, isError = true) {
+  const el = document.getElementById('auth-message');
+  el.textContent = msg;
+  el.className   = 'auth-message ' + (isError ? 'auth-error' : 'auth-success');
+  el.style.display = msg ? 'block' : 'none';
+}
+
+function translateAuthError(msg) {
+  if (msg.includes('Invalid login credentials'))  return '이메일 또는 비밀번호가 올바르지 않습니다.';
+  if (msg.includes('Email not confirmed'))         return '이메일 인증이 필요합니다. 받은 편지함을 확인해 주세요.';
+  if (msg.includes('User already registered'))     return '이미 가입된 이메일입니다. 로그인해 주세요.';
+  if (msg.includes('Password should be at least')) return '비밀번호는 6자 이상이어야 합니다.';
+  if (msg.includes('Unable to validate email'))    return '올바른 이메일 형식이 아닙니다.';
+  if (msg.includes('email rate limit') || msg.includes('Email rate limit')) return '이메일 발송 한도를 초과했습니다. 잠시 후 다시 시도해 주세요.';
+  if (msg.includes('over_email_send_rate_limit')) return '이메일 발송 한도를 초과했습니다. 잠시 후 다시 시도해 주세요.';
+  return msg;
+}
+
+document.getElementById('tab-login').addEventListener('click', () => {
+  authMode = 'login';
+  document.getElementById('tab-login').classList.add('active');
+  document.getElementById('tab-signup').classList.remove('active');
+  document.getElementById('auth-submit-btn').textContent = '로그인';
+  setAuthMessage('');
+});
+
+document.getElementById('tab-signup').addEventListener('click', () => {
+  authMode = 'signup';
+  document.getElementById('tab-signup').classList.add('active');
+  document.getElementById('tab-login').classList.remove('active');
+  document.getElementById('auth-submit-btn').textContent = '회원가입';
+  setAuthMessage('');
+});
+
+document.getElementById('auth-form').addEventListener('submit', async e => {
+  e.preventDefault();
+  const email    = document.getElementById('auth-email').value.trim();
+  const password = document.getElementById('auth-password').value;
+  const btn      = document.getElementById('auth-submit-btn');
+  btn.disabled = true;
+  setAuthMessage('');
+
+  if (authMode === 'login') {
+    const { error } = await db.auth.signInWithPassword({ email, password });
+    if (error) setAuthMessage(translateAuthError(error.message));
+  } else {
+    const { data, error } = await db.auth.signUp({ email, password });
+    if (error) {
+      setAuthMessage(translateAuthError(error.message));
+    } else if (!data.session) {
+      setAuthMessage('확인 이메일을 발송했습니다. 이메일을 확인하고 링크를 클릭해 주세요.', false);
+    }
+  }
+  btn.disabled = false;
+});
+
+async function signOut() {
+  await db.auth.signOut();
+}
+document.getElementById('logout-btn-mobile').addEventListener('click', signOut);
+document.getElementById('logout-btn-desktop').addEventListener('click', signOut);
+
+async function signInWithProvider(provider) {
+  setAuthMessage('');
+  const { error } = await db.auth.signInWithOAuth({
+    provider,
+    options: { redirectTo: location.href },
+  });
+  if (error) setAuthMessage(translateAuthError(error.message));
+}
+document.getElementById('btn-google').addEventListener('click', () => signInWithProvider('google'));
+document.getElementById('btn-github').addEventListener('click', () => signInWithProvider('github'));
+
+db.auth.onAuthStateChange((event, session) => {
+  if (session?.user) {
+    hideAuthScreen(session.user);
+  } else {
+    showAuthScreen();
+  }
+});
+
 /* ─── 상수 ─────────────────────────────────────────── */
 const PRIORITY_LABEL = { high: '높음', medium: '보통', low: '낮음' };
 const CATEGORY_LABEL = { work: '업무', personal: '개인', study: '공부', other: '기타' };
@@ -271,6 +373,7 @@ async function addTodo(text, priority, category, dueDate) {
     category:   category || 'personal',
     due_date:   dueDate  || null,
     sort_order: nextOrder,
+    user_id:    currentUser.id,
   });
   if (error) {
     console.error('addTodo:', error);
@@ -374,5 +477,4 @@ document.getElementById('fab-btn').addEventListener('click', e => {
   document.getElementById('todo-input').focus();
 });
 
-/* ─── 초기 렌더링 ────────────────────────────────────── */
-renderTodos();
+/* ─── 초기 렌더링은 hideAuthScreen()에서 인증 후 실행 ── */

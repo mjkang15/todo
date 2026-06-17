@@ -4,6 +4,42 @@ localStorage → Supabase 전환 계획 및 설정 가이드
 
 ---
 
+## 0. 이메일 인증 기능 활성화 (신규)
+
+### 0-1. Supabase Auth 설정
+[app.supabase.com](https://app.supabase.com) → 프로젝트 → **Authentication > Providers > Email**
+
+- **Enable Email provider**: ON
+- **Confirm email**: OFF 권장 (file:// 앱에서 리다이렉트가 불가하므로)
+
+> `Confirm email`을 ON으로 유지하려면 Supabase 대시보드 **Authentication > URL Configuration** 에서  
+> `Site URL`을 앱이 호스팅되는 URL로 설정해야 합니다.
+
+### 0-2. todos 테이블에 user_id 컬럼 추가 및 RLS 설정
+Supabase **SQL Editor**에서 아래 SQL을 실행합니다.
+
+```sql
+-- 기존 데이터 초기화 (필요 시)
+-- DELETE FROM todos;
+
+-- user_id 컬럼 추가
+ALTER TABLE todos ADD COLUMN IF NOT EXISTS user_id UUID REFERENCES auth.users(id);
+
+-- RLS 활성화
+ALTER TABLE todos ENABLE ROW LEVEL SECURITY;
+
+-- 본인 데이터만 접근 허용 정책 (이미 존재하면 삭제 후 재생성)
+DROP POLICY IF EXISTS "본인 todos만 접근" ON todos;
+CREATE POLICY "본인 todos만 접근"
+  ON todos FOR ALL
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+```
+
+> 위 SQL을 실행해야 회원가입/로그인 후 할 일 추가가 정상 동작합니다.
+
+---
+
 ## 1. Supabase 프로젝트 연결
 
 ### 1-1. 프로젝트 정보 확인
