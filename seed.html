@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>데이터 초기화 중...</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #f0f4f8;
+      color: #333;
+    }
+    .box {
+      background: white;
+      border-radius: 12px;
+      padding: 40px 48px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h2 { margin-bottom: 8px; color: #1976D2; }
+    p  { color: #757575; font-size: 0.95rem; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>⚽ 월드컵 일정 로드 중...</h2>
+    <p>localStorage에 데이터를 저장하고 TODO 앱으로 이동합니다.</p>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'todos';
+
+    const matches = [
+      {
+        id: 1749686400000,
+        text: '⚽ [월드컵 A조] 한국 vs 체코 — 6/12(금) 오전 11시 | 과달라하라',
+        done: true,
+        priority: 'high',
+        category: 'other',
+        dueDate: '2026-06-12',
+      },
+      {
+        id: 1749686400001,
+        text: '⚽ [월드컵 A조] 한국 vs 멕시코 — 6/19(금) 오전 10시 | 과달라하라',
+        done: false,
+        priority: 'high',
+        category: 'other',
+        dueDate: '2026-06-19',
+      },
+      {
+        id: 1749686400002,
+        text: '⚽ [월드컵 A조] 남아공 vs 한국 — 6/25(목) | 몬테레이',
+        done: false,
+        priority: 'high',
+        category: 'other',
+        dueDate: '2026-06-25',
+      },
+    ];
+
+    const existing = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+    const existingIds = new Set(existing.map(t => t.id));
+    const toAdd = matches.filter(m => !existingIds.has(m.id));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...existing, ...toAdd]));
+
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 800);
+  </script>
+</body>
+</html>

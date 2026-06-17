@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TODO LIST</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- 모바일 앱바 -->
+  <header class="app-bar">
+    <span class="material-icons app-bar-icon">task_alt</span>
+    <span class="app-bar-title">TODO LIST</span>
+  </header>
+
+  <main class="main">
+    <div class="container">
+
+      <!-- 데스크탑 타이틀 -->
+      <h1 class="page-title">TODO LIST</h1>
+
+      <!-- 검색 -->
+      <div class="search-wrap">
+        <span class="material-icons search-icon">search</span>
+        <input class="search-input" id="search-input" placeholder="검색..." />
+      </div>
+
+      <!-- 입력 카드 -->
+      <div class="card input-card">
+        <div class="input-row">
+          <div class="text-field">
+            <input type="text" id="todo-input" placeholder=" " autocomplete="off" />
+            <label for="todo-input">할 일을 입력하세요</label>
+          </div>
+          <button id="add-btn" class="btn-filled">
+            <span class="material-icons">add</span>
+            <span class="btn-label">추가</span>
+          </button>
+        </div>
+        <div class="options-row">
+          <select id="priority-select" class="select-field">
+            <option value="high">🔴 높음</option>
+            <option value="medium" selected>🟡 보통</option>
+            <option value="low">🔵 낮음</option>
+          </select>
+          <select id="category-select" class="select-field">
+            <option value="work">💼 업무</option>
+            <option value="personal" selected>👤 개인</option>
+            <option value="study">📚 공부</option>
+            <option value="other">📌 기타</option>
+          </select>
+          <input type="date" id="due-date-input" class="date-field" />
+        </div>
+      </div>
+
+      <!-- 필터 칩 -->
+      <div class="chip-row" id="status-tabs">
+        <button class="filter-chip active" data-filter="all">전체</button>
+        <button class="filter-chip" data-filter="active">진행중</button>
+        <button class="filter-chip" data-filter="done">완료</button>
+      </div>
+      <div class="chip-row" id="category-tabs">
+        <button class="filter-chip active" data-category="all">전체</button>
+        <button class="filter-chip" data-category="work">💼 업무</button>
+        <button class="filter-chip" data-category="personal">👤 개인</button>
+        <button class="filter-chip" data-category="study">📚 공부</button>
+        <button class="filter-chip" data-category="other">📌 기타</button>
+      </div>
+
+      <!-- 할 일 목록 -->
+      <ul id="todo-list"></ul>
+
+      <!-- 푸터 -->
+      <div class="footer">
+        <span id="remaining" class="remaining-text">남은 할 일: 0개</span>
+        <button id="clear-btn" class="btn-text">완료 삭제</button>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FAB (모바일) -->
+  <button class="fab" id="fab-btn" aria-label="할 일 추가">
+    <span class="material-icons">add</span>
+  </button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
