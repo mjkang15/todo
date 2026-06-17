@@ -50,6 +50,165 @@ body {
   to { transform: scale(4); opacity: 0; }
 }
 
+/* ─── Auth Overlay ───────────────────────────────────── */
+#auth-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--background);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.auth-card {
+  background: var(--surface);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-3);
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28px;
+}
+
+.auth-tabs {
+  display: flex;
+  border-bottom: 2px solid var(--outline);
+  margin-bottom: 24px;
+}
+
+.auth-tab {
+  flex: 1;
+  padding: 10px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  font-size: .95rem;
+  font-family: inherit;
+  color: var(--on-surface-med);
+  cursor: pointer;
+  transition: color .2s, border-color .2s;
+}
+
+.auth-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 500;
+}
+
+.auth-field {
+  position: relative;
+  margin-bottom: 16px;
+}
+
+.auth-field input {
+  width: 100%;
+  height: 52px;
+  padding: 18px 14px 6px;
+  border: 1px solid var(--outline);
+  border-radius: var(--r-xs);
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+  background: transparent;
+  color: var(--on-surface);
+  transition: border-color .15s;
+}
+
+.auth-field input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary);
+}
+
+.auth-field label {
+  position: absolute;
+  left: 14px;
+  top: 16px;
+  font-size: 1rem;
+  color: var(--on-surface-med);
+  background: var(--surface);
+  padding: 0 4px;
+  pointer-events: none;
+  transition: all .15s ease;
+}
+
+.auth-field input:focus + label,
+.auth-field input:not(:placeholder-shown) + label {
+  top: 4px;
+  font-size: .72rem;
+  color: var(--primary);
+  font-weight: 500;
+}
+
+.auth-field input:not(:focus):not(:placeholder-shown) + label {
+  color: var(--on-surface-med);
+}
+
+.auth-message {
+  padding: 10px 14px;
+  border-radius: var(--r-xs);
+  font-size: .88rem;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.auth-message.auth-error   { background: var(--error-bg); color: var(--error); }
+.auth-message.auth-success { background: #E8F5E9; color: #1B5E20; }
+
+.auth-submit {
+  width: 100%;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+/* ─── App Bar user section ───────────────────────────── */
+.app-bar-user {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.app-bar-email {
+  font-size: .75rem;
+  opacity: .85;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-bar-logout {
+  color: var(--on-primary) !important;
+}
+.app-bar-logout:hover { background: rgba(255,255,255,.15) !important; }
+
+/* ─── Desktop user bar ───────────────────────────────── */
+.desktop-user-bar {
+  display: none;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 16px;
+  font-size: .85rem;
+  color: var(--on-surface-med);
+}
+
+.desktop-user-email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 260px;
+}
+
 /* ─── App Bar (mobile) ───────────────────────────────── */
 .app-bar {
   display: flex;
@@ -450,6 +609,8 @@ body {
   }
 
   .container { max-width: 600px; }
+
+  .desktop-user-bar.visible { display: flex; }
 
   .page-title {
     display: block;

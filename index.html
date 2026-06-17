@@ -10,14 +10,56 @@
 </head>
 <body>
 
+  <!-- 인증 오버레이 -->
+  <div id="auth-overlay">
+    <div class="auth-card">
+      <div class="auth-header">
+        <span class="material-icons" style="font-size:3rem;color:var(--primary)">task_alt</span>
+        <h1 style="font-size:1.5rem;font-weight:500;color:var(--primary);letter-spacing:2px;margin-top:8px">TODO LIST</h1>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="tab-login" type="button">로그인</button>
+        <button class="auth-tab" id="tab-signup" type="button">회원가입</button>
+      </div>
+
+      <div id="auth-message" class="auth-message" style="display:none"></div>
+
+      <form id="auth-form">
+        <div class="auth-field">
+          <input type="email" id="auth-email" placeholder=" " autocomplete="email" required />
+          <label for="auth-email">이메일</label>
+        </div>
+        <div class="auth-field">
+          <input type="password" id="auth-password" placeholder=" " autocomplete="current-password" required minlength="6" />
+          <label for="auth-password">비밀번호 (6자 이상)</label>
+        </div>
+        <button type="submit" class="btn-filled auth-submit" id="auth-submit-btn">로그인</button>
+      </form>
+    </div>
+  </div>
+
   <!-- 모바일 앱바 -->
   <header class="app-bar">
     <span class="material-icons app-bar-icon">task_alt</span>
     <span class="app-bar-title">TODO LIST</span>
+    <div class="app-bar-user" id="app-bar-user" style="display:none">
+      <span class="app-bar-email" id="app-bar-email"></span>
+      <button class="icon-btn app-bar-logout" id="logout-btn-mobile" title="로그아웃">
+        <span class="material-icons">logout</span>
+      </button>
+    </div>
   </header>
 
   <main class="main">
     <div class="container">
+
+      <!-- 데스크탑 사용자 바 -->
+      <div class="desktop-user-bar" id="desktop-user-bar">
+        <span class="material-icons" style="font-size:1rem">account_circle</span>
+        <span id="desktop-user-email" class="desktop-user-email"></span>
+        <button class="btn-text" id="logout-btn-desktop">로그아웃</button>
+      </div>
 
       <!-- 데스크탑 타이틀 -->
       <h1 class="page-title">TODO LIST</h1>
